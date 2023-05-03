@@ -1,0 +1,34 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: oc-cmd@3
+  inputs:
+    connectionType: 'OpenShift Connection Service'
+    openshiftService: 'openshift-3'
+    #cmd: 'oc start-build nodejs-ex --follow'
+    cmd: 'oc new-app https://github.com/iam-aravind/Node-Web-Server.git -l name=micro-app'
+- task: oc-cmd@3
+  inputs:
+    connectionType: 'OpenShift Connection Service'
+    openshiftService: 'openshift-3'
+    cmd: 'oc expose service/node-web-server'
+- task: oc-cmd@3
+  inputs:
+    connectionType: 'OpenShift Connection Service'
+    openshiftService: 'openshift-3'
+    cmd: 'oc start-build node-web-server --follow'    
+- task: oc-cmd@3
+  inputs:
+    connectionType: 'OpenShift Connection Service'
+    openshiftService: 'openshift-3'
+    cmd: 'oc status'
+
